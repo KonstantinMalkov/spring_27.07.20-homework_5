@@ -1,36 +1,63 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
 
-        <title>GeekBrains</title>
-    </head>
-    <body>
-        <h1>Привет от GeekBrains!</h1>
-        <hr>
-        <table>
-            <thead>
-                <th>id</th>
-                <th>name</th>
-                <th>description</th>
-                <th>created</th>
-            </thead>
-            <tbody>
-                <tr th:each="book, iterator : ${books}">
-                    <span th:if="${book.available}">
-                        <td th:text="${iterator.index + 1}"/>
-                        <td>
-                            <a th:href="@{'/books/' +  ${book.id}}">[[ ${book.name} ]]</a>
-                        </td>
-                        <td th:text="${book.description}"></td>
-                        <td th:text="${#dates.format(book.created, 'dd-MM-yyyy')}"></td>
-                    </span>
-                </tr>
-            </tbody>
-        </table>
-    <select>
+    <title>GeekBrains</title>
+    <script type="text/javascript" th:inline="javascript">
+        function getValueSelectedFilter() {
+            <!--2 задание - попытался получить значение с формы через функцию, возвращает пустое значение даже если пытаюсь вернуть просто текст-->
+            return "sometext";//document.getElementById("paramName").value;
+        }
+    </script>
+</head>
+<body>
+<h1>Привет от GeekBrains!</h1>
+<form action="#" th:action="@{'/some3?paramName=ddffgg'}"  method="post">
+    <select id="SelectedFilter">
         <option th:text="'Не выбрано'" th:value="null"/>
-        <option th:each="month : ${T(ru.geekbrains.sample.enums.Month).values()}" th:value="${month.ordinal()}" th:text="${month}">
+        <option th:each="page : ${T(ru.geekbrains.sample.enums.SelectedFilter).values()}" th:value="${page.ordinal()}" th:text="${page}">
     </select>
-    </body>
+
+    <input type="text" id="paramName" value="123456"/>
+    <button type="submit">apply filter</button>
+</form>
+<!--2 задание - попробовал через параметр (/...url...?paramName="значение параметра"), но не могу получить значение с формы-->
+<a href="/supershop/some3?paramName=" + getValueSelectedFilter()>try_href_SelectedFilter</a>
+
+<hr>
+<table>
+    <thead>
+    <th>id</th>
+    <th>name</th>
+    <th>description</th>
+    <th>created</th>
+    </thead>
+    <tbody>
+    <tr th:each="book, iterator : ${books}">
+        <form action="#" th:action="@{'/some/' +  ${book.id}}" method="post">
+                        <span th:if="${book.available}">
+                            <td th:text="${iterator.index + 1}"/>
+                            <td>
+                                <a th:href="@{'/books/' +  ${book.id}}">[[ ${book.name} ]]</a>
+                                <!--3 задание - добавил кнопку для перехода к редактированию товара-->
+                                <button type="submit">submit</button>
+                            </td>
+                            <td th:text="${book.description}"></td>
+                            <td th:text="${#dates.format(book.created, 'dd-MM-yyyy')}"></td>
+
+                        </span>
+        </form>
+    </tr>
+    </tbody>
+</table>
+<!--1 задание - пагинация - кнопка назад (подгружает по три товара)-->
+<form action="#" th:action="@{'/some2/123/' + ${firstNumber}}" method="post">
+    <button type="submit">back</button>
+</form>
+<!--1 задание - пагинация - кнопка вперед (подгружает по три товара) -->
+<form action="#" th:action="@{'/some2/456/' + ${firstNumber}}" method="post">
+    <button type="submit">forth</button>
+</form>
+</body>
 </html>
